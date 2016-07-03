@@ -1,6 +1,5 @@
 # totally badass voting script by freenode's caveman that, unlike others,
-# actually does some statistical significance testing. seriously, others a
-# joke. can you believe it? none measure p-value? fuck them.
+# actually does some statistical significance testing.
 #
 # licensed under MIT license
 #
@@ -50,7 +49,7 @@ N_options = len(d)
 N_votes = sum([d[k] for k in d])
 
 # settings
-R = 1000
+R = 100000
 random.seed(0)
 
 # rank options by their votes
@@ -61,7 +60,7 @@ options_rank = sorted(d.items(), key=operator.itemgetter(1), reverse=True)
 winning_gap = gap(options_rank)
 
 # compute p value
-sys.stderr.write('simulating:')
+sys.stderr.write('simulating')
 p = 0
 for r in range(0, R):
     # simulate a noisy random vote
@@ -76,11 +75,13 @@ for r in range(0, R):
     # ar business
     if winning_gap_random >= winning_gap:
         p += 1
-        sys.stderr.write('+')
+        if (r % (R/1000)) == 0:
+            sys.stderr.write('+')
     else:
-        sys.stderr.write('-')
+        if (r % (R/1000)) == 0:
+            sys.stderr.write('-')
+    sys.stderr.flush()
 sys.stderr.write(' ok\n')
-
 
 print('p value is: %f' % (float(p+1)/float(R+1)))
 
